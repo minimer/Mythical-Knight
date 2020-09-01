@@ -67,6 +67,8 @@ class ChooseBox:
         for i in range(len(self.dirs)):
             if self.dirs[i].is_pressed(events):
                 self.choosen=i
+        choosen=self.dirs[self.choosen]
+        pygame.draw.rect(choosen.surface,(100,100,100),(0,0,*choosen.rect[2:]),10)
 
 class ScrollBar:
     def __init__(self,master,rect,choosen=0):
@@ -89,7 +91,7 @@ class ScrollBar:
         pygame.draw.rect(self.master,(255,255,255),(self.rect[0]+m,self.rect[1]+m,(self.rect[2]-m*2)*self.choosen,self.rect[3]-m*2))
 
 class Input:
-    def __init__(self,master,rect,bg_text,limit=15):
+    def __init__(self,master,rect,bg_text,limit=21,default=''):
         self.master=master
         self.choosen=0
         self.limit=limit
@@ -97,8 +99,8 @@ class Input:
         x, y = self.master.get_size()
         self.rect = [rect[0] * x, rect[1] * y, rect[2] * x, rect[3] * y]
         self.surface=pygame.Surface(self.rect[2:])
-        self.txt = ''
-        self.text=Text(self.surface,self.txt,(0,0,1,1))
+        self.txt = default
+        self.text=Text(self.surface,self.txt,(0,0,1,1),(0,0,0))
         self.bg_text=Text(self.surface,bg_text,(0,0,1,1),(150,150,150))
     def place(self,events):
         self.surface.fill((255,255,255))
@@ -120,7 +122,7 @@ class Input:
                     if ev.key==pygame.K_LEFT:self.choosen-=1
                     elif ev.key==pygame.K_RIGHT:self.choosen+=1
                     elif ev.key==8:
-                        self.txt=self.txt[:self.choosen-1]+self.txt[self.choosen:]
+                        self.txt=self.txt[:max(0,self.choosen-1)]+self.txt[self.choosen:]
                         self.choosen-=1
                     elif ev.key==pygame.K_v and keys[pygame.K_LCTRL]:
                         try:add = pygame.scrap.get(pygame.SCRAP_TEXT).decode("UTF-8")[:-1]
